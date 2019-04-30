@@ -1,0 +1,7 @@
+PING qa-scl018-013.i.jaspersystems.com (10.5.91.132) 56(84) bytes of data.
+64 bytes from qa-scl018-013.i.jaspersystems.com (10.5.91.132): icmp_seq=1 ttl=57 time=3.74 ms
+64 bytes from qa-scl018-013.i.jaspersystems.com (10.5.91.132): icmp_seq=2 ttl=57 time=3.75 ms
+
+--- qa-scl018-013.i.jaspersystems.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 3.746/3.750/3.755/0.061 ms

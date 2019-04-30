@@ -1,0 +1,75 @@
+---
+
+# Gather facts about all VPCs
+
+- name: 3.1.2 Ensure packet redirect sending is disabled
+  lineinfile:
+    path: /etc/sysctl.conf
+    line: "{{ item }}"
+    state: present
+  with_items:
+    - net.ipv4.ip_forward = 0
+    - net.ipv4.conf.all.accept_source_route = 0
+    - net.ipv4.conf.default.accept_source_route = 0
+    - net.ipv4.icmp_echo_ignore_broadcasts = 1
+    - net.ipv4.icmp_ignore_bogus_error_responses = 1
+    - net.ipv4.conf.all.rp_filter = 1
+    - net.ipv4.conf.default.rp_filter = 1
+    - net.ipv4.tcp_syncookies = 1
+    - net.ipv6.conf.all.accept_ra = 0
+    - net.ipv6.conf.default.accept_ra = 0
+    - net.ipv6.conf.all.accept_redirects = 0
+    - net.ipv6.conf.default.accept_redirects = 0
+    - net.ipv6.route.flush=1
+    - net.ipv4.conf.all.send_redirects=0
+    - net.ipv4.conf.default.send_redirects=0    
+    - net.ipv4.route.flush=1
+    - net.ipv4.conf.all.accept_redirects=0
+    - net.ipv4.conf.default.accept_redirects=0
+    - net.ipv4.route.flush=1
+    - net.ipv4.conf.all.secure_redirects=0
+    - net.ipv4.conf.default.secure_redirects=0
+    - net.ipv4.route.flush=1
+    - net.ipv4.conf.all.log_martians=1
+    - net.ipv4.conf.default.log_martians=1
+    - net.ipv4.route.flush=1
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+#   shell: "sysctl -w net.ipv4.conf.all.send_redirects=0"
+# 
+# - name: 3.1.2b Ensure packet redirect sending is disabled
+#   shell: "sysctl -w net.ipv4.conf.default.send_redirects=0"
+# 
+# - name: 3.1.2c Ensure packet redirect sending is disabled
+#   shell: "sysctl -w net.ipv4.route.flush=1"
+# 
+# - name: 3.2.2a Ensure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.conf.all.accept_redirects=0"
+# 
+# - name: 3.2.2b Ensure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.conf.default.accept_redirects=0"
+# 
+# - name: 3.2.2c Ensure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.route.flush=1"
+# 
+# - name: 3.2.3a Ensure secure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.conf.all.secure_redirects=0"
+# 
+# - name: 3.2.3b Ensure secure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.conf.default.secure_redirects=0"
+# 
+# - name: 3.2.3c Ensure secure ICMP redirects are not accepted
+#   shell: "sysctl -w net.ipv4.route.flush=1"
+# 
+# - name: 3.2.4a Ensure suspicious packets are logged
+#   shell: "sysctl -w net.ipv4.conf.all.log_martians=1"
+# 
+# - name: 3.2.4b Ensure suspicious packets are logged
+#   shell: "sysctl -w net.ipv4.conf.default.log_martians=1"
+
+# - name: 3.2.4c Ensure suspicious packets are logged
+#   shell: "sysctl -w net.ipv4.route.flush=1"
+
+- name: Enable sysctl changes
+  shell: "/sbin/sysctl -p /etc/sysctl.conf"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"

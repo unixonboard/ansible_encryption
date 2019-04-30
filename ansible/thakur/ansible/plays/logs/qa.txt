@@ -1,0 +1,4 @@
+groupadd -g 1037 walter
+useradd -m -d /home/walter -s /bin/bash -g 1037 -u 1037 -c "Walter G. da Cruz" walter
+
+qa-scl005-018.i.jaspersystems.com ping

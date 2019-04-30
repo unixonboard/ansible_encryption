@@ -1,0 +1,24 @@
+---
+
+# Playbook name: iptables_redis.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.01.19
+# Description:
+# Install iptables rules on RedisDB Cluster
+# CentOS 7 uses FirewallD, while CentOS 5 and 6 use the more classic iptables.
+# Most of our RedisDB Cluster works on CentOS 7, but I need to consider the other 2
+# So, I'll use the command:
+# when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
+#
+# Requirements:
+# a) CentOS 7 already comes with yum-security plugin, no need to install
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: We need to install latest iptables package

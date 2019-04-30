@@ -1,0 +1,7 @@
+.git
+*.swp
+*.retry
+logs/*
+tmp/*
+dc13_2_sjc-obs-linux19.sh
+sjc-obs-linu19_2_local.sh

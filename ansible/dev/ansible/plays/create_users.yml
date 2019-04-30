@@ -1,0 +1,274 @@
+---
+
+# Playbook name: create_user.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.02.20
+# Description:
+# Add Entry into /etc/issue marking the VM as encrypted
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: Allow access to etc-security_access file
+    shell: "chattr -i /etc/security/access.conf"
+
+  - name: Create Anil group
+    group:
+      name: aniledig
+      gid: 9009
+      system: no
+      state: present
+
+  - name: Create Anil user
+    user:
+      name: aniledig
+      uid: 9009
+      group: 9009
+      password: "$1$anil_usa$s7lSEjTGoj601BjfXIMtj1"
+      # groups: # empty by default, can be part of several groups
+      #   - wheel
+      state: present
+      shell: /bin/bash
+      comment: Anil Ediga
+      system: no
+      createhome: yes
+      home: /home/aniledig
+
+  - name: Anil SSH Authorized Key
+    authorized_key:
+      user: aniledig
+      state: present
+      key: "{{ lookup('file', '~/ansible/plays/files/public_keys/aniledig') }}"
+
+  - name: Modify Anil Security Access 
+    lineinfile:
+      path: /etc/security/access.conf
+      insertbefore: '- : ALL'
+      line: '+ : aniledig : ALL'
+      owner: root
+      group: root
+      mode: 0644
+
+  # - name: Add Anil to sudo list
+  - copy:
+      content: |
+               aniledig ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/aniledig'
+      owner: root
+      group: root
+      mode:  0440
+
+  - name: Create Aravind group
+    group:
+      name: aravind
+      gid: 9010
+      system: no
+      state: present
+
+  - name: Create Aravind user
+    user:
+      name: aravind
+      uid: 9010
+      group: 9010
+      password: "$1$aravind_$Q82n8Psbb..f0LA6vVCm/."
+      # groups: # empty by default, can be part of several groups
+      #   - wheel
+      state: present
+      shell: /bin/bash
+      comment: Aravind Reddy Jangam
+      system: no
+      createhome: yes
+      home: /home/aravind
+
+  - name: Aravind SSH Authorized Key
+    authorized_key:
+      user: aravind
+      state: present
+      key: "{{ lookup('file', '~/ansible/plays/files/public_keys/aravind') }}"
+
+  - name: Modify Aravind Security Access 
+    lineinfile:
+      path: /etc/security/access.conf
+      insertbefore: '- : ALL'
+      line: '+ : aravind : ALL'
+      owner: root
+      group: root
+      mode: 0644
+
+  # - name: Add Aravind to sudo list
+  - copy:
+      content: |
+               aravind ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/aravind'
+      owner: root
+      group: root
+      mode:  0440
+
+  - name: Create Manas group
+    group:
+      name: manasrs1
+      gid: 9011
+      system: no
+      state: present
+
+  - name: Create Manas user
+    user:
+      name: manasrs1
+      uid: 9011
+      group: 9011
+      password: "$1$manasran$o2PLmlMssQEoggN/ISntx1"
+      # groups: # empty by default, can be part of several groups
+      #   - wheel
+      state: present
+      shell: /bin/bash
+      comment: Manas Sahoo
+      system: no
+      createhome: yes
+      home: /home/manasrs1
+
+  - name: Manas SSH Authorized Key
+    authorized_key:
+      user: manasrs1
+      state: present
+      key: "{{ lookup('file', '~/ansible/plays/files/public_keys/manasrs1') }}"
+
+  - name: Modify Manas Security Access 
+    lineinfile:
+      path: /etc/security/access.conf
+      insertbefore: '- : ALL'
+      line: '+ : manasrs1 : ALL'
+      owner: root
+      group: root
+      mode: 0644
+
+  # - name: Add Manas to sudo list
+  - copy:
+      content: |
+               manasrs1 ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/manasrs1'
+      owner: root
+      group: root
+      mode:  0440
+
+  - name: Create Takur group
+    group:
+      name: thnanda
+      gid: 9012
+      system: no
+      state: present
+
+  - name: Create Takur user
+    user:
+      name: thnanda
+      uid: 9012
+      group: 9012
+      password: "$1$ui4y19rn$sCWZwFcInZV93Ceg1puaK1"
+      # groups: # empty by default, can be part of several groups
+      #   - wheel
+      state: present
+      shell: /bin/bash
+      comment: Nanda Thakur
+      system: no
+      createhome: yes
+      home: /home/thnanda
+
+  - name: Takur SSH Authorized Key
+    authorized_key:
+      user: thnanda
+      state: present
+      key: "{{ lookup('file', '~/ansible/plays/files/public_keys/thnanda') }}"
+
+  - name: Modify Takur Security Access 
+    lineinfile:
+      path: /etc/security/access.conf
+      insertbefore: '- : ALL'
+      line: '+ : thnanda : ALL'
+      owner: root
+      group: root
+      mode: 0644
+
+  # - name: Add Takur to sudo list
+  - copy:
+      content: |
+               thnanda ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/thnanda'
+      owner: root
+      group: root
+      mode:  0440
+
+  - name: Create Venkata group
+    group:
+      name: venkatam
+      gid: 9008
+      system: no
+      state: present
+
+  - name: Create Venkata user
+    user:
+      name: venkatam
+      uid: 9008
+      group: 9008
+      password: "$1$venkata_$JI4yozAgMDuEs9JHv.9Kr."
+      # groups: # empty by default, can be part of several groups
+      #   - wheel
+      state: present
+      shell: /bin/bash
+      comment: Venkata Mallam
+      system: no
+      createhome: yes
+      home: /home/venkatam
+
+  - name: Venkata SSH Authorized Key
+    authorized_key:
+      user: venkatam
+      state: present
+      key: "{{ lookup('file', '~/ansible/plays/files/public_keys/venkatam') }}"
+
+  - name: Modify Venkata Security Access 
+    lineinfile:
+      path: /etc/security/access.conf
+      insertbefore: '- : ALL'
+      line: '+ : venkatam : ALL'
+      owner: root
+      group: root
+      mode: 0644
+
+  # - name: Add Venkata to sudo list
+  - copy:
+      content: |
+               venkatam ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/venkatam'
+      owner: root
+      group: root
+      mode:  0440
+
+  # fatal Access denied for user thnanda by PAM account configuration
+  - name: Fix Access blocked by pam.d
+    lineinfile:
+      path: /etc/pam.d/sshd
+      insertbefore: '^account    required'
+      line: 'account    sufficient   pam_localuser.so'
+      owner: root
+      group: root
+      mode: 0644
+
+  # Need to restart sshd service
+  - name: restart sshd daemon after modifying pam.d access for init systems
+    shell: "/sbin/service sshd restart"
+    when: "ansible_service_mgr != 'systemd'"
+
+  # Need to restart sshd service 
+  - name: restart sshd daemon after modifying pam.d access for systemd systems
+    shell: "/bin/systemctl restart sshd"
+    when: "ansible_service_mgr == 'systemd'"
+
+  - name: Add chattr on etc_security_access_conf file
+    shell: "chattr +i /etc/security/access.conf"
+

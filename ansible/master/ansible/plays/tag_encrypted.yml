@@ -1,0 +1,27 @@
+---
+
+# Playbook name: tag_encrypted.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.02.17
+# Description:
+# Add Entry into /etc/issue marking the VM as encrypted
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: Add entry into /etc/issue saying the VM filesystem is encrypted
+    lineinfile:
+      path: /etc/issue
+      state: present
+      insertafter: EOF
+      line: '===== Filesystem partition is Encrypted ====='
+      owner: root
+      group: root
+      mode: 0444

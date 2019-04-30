@@ -1,0 +1,10 @@
+---
+- hosts: all
+  gather_facts: True
+  become: yes
+
+  # tasks:
+  #   - name: Install EPEL
+
+  roles:
+    - cis-benchmark

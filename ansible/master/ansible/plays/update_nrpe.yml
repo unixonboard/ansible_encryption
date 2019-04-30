@@ -1,0 +1,105 @@
+---
+
+# Playbook name: update_nrpe.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.03.03
+# Description:
+# Migrate nrpe service from xinet.d to nrpe daemon
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: 2.2.1.0.a Install epel key for CentOS 5
+    shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-5"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  - name: 2.2.1.0.b Install epel key for CentOS 6
+    shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
+
+  - name: 2.2.1.0.b Install epel key for CentOS 7
+    shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+  - name: Install EPEL repository.
+    yum:
+      name: "epel-release.noarch"
+      state: latest
+      
+  - name: After EPEL is installed, we install nrpe daemon
+    yum:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - nrpe.x86_64
+      - nagios-plugins
+
+  - name: rename original nrpe.conf so it will not conflict with original file
+    file:
+      path: /etc/nagios/nrpe.cfg
+      state: absent
+
+  # Ansible module copy do not copy files recursively
+  - name: Copy original files from usr_local_nagios to etc_nagios
+    shell: "cp -uprf /usr/local/nagios /etc"
+
+  # - name: reconfigure nrpe.cfg to change from usr_local to etc
+  - replace:
+      path: /etc/nagios/nrpe.cfg
+      regexp: "/usr/local"
+      replace: "/etc"
+      backup: yes
+  
+  - name: add nrpe_user
+    lineinfile:
+      path: /etc/nagios/nrpe.cfg
+      line: "nrpe_user=nrpe"
+      state: present
+      insertbefore: "^command_timeout=60"
+
+  - name: add nrpe_group
+    lineinfile:
+      path: /etc/nagios/nrpe.cfg
+      line: "nrpe_group=nrpe"
+      state: present
+      insertbefore: "^command_timeout=60"
+
+  - name: Stop Xinetd Service
+    service:
+      name:  xinetd
+      state: stopped
+      enabled: no
+    when: "ansible_service_mgr != 'systemd'"
+  
+  - name: Stop Xinetd SystemD Service
+    systemd:
+      name:  xinetd
+      state: stopped
+      enabled: no
+    when: "ansible_service_mgr == 'systemd'"
+  
+  - name: Start NRPE Service
+    service:
+      name:  nrpe
+      state: restarted
+      enabled: yes
+    when: "ansible_service_mgr != 'systemd'"
+  
+  - name: Start NRPE SystemD Service
+    service:
+      name:  nrpe
+      state: restarted
+      enabled: yes
+    when: "ansible_service_mgr == 'systemd'"
+ 
+  # Depend about Ansible version, check if you should use "RedHat" or "Redhat"
+  # when: ansible_os_family == "Redhat" and ansible_lsb.major_release|int = 5
+  # when: ansible_os_family == "RedHat" and ansible_lsb.major_release|int >= 5
+  # when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

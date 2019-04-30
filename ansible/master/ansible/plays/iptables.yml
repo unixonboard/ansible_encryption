@@ -1,0 +1,29 @@
+---
+
+# Playbook name: iptables.yml
+# Author:        Walter G. da Cruz
+# Version:       0.2
+# Date:          2019.02.18
+# Description:
+# Install  Initial Firewall IPTables depending of the type of Application (custom ports open)
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  gather_facts: True
+  become: yes
+
+  # tasks:
+  # - debug: msg="Condition is {{ hosttype }}"
+
+  # - include_role:
+  #   name: iptables
+  # vars:
+  # host_type: 'aaa'
+  # host_type: "{{ hosttype }}"
+
+  roles: 
+    - role: iptables
+      vars:
+        hosttype: "{{ app_type }}"

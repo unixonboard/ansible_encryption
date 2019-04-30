@@ -1,0 +1,6 @@
+grace8                     : ok=0    changed=0    unreachable=0    failed=1
+grace9                     : ok=0    changed=0    unreachable=0    failed=1
+multani05                  : ok=0    changed=0    unreachable=0    failed=1
+qa-cc06-003                : ok=0    changed=0    unreachable=0    failed=1
+qa-cc06-004                : ok=0    changed=0    unreachable=0    failed=1
+sineqa                     : ok=0    changed=0    unreachable=0    failed=1

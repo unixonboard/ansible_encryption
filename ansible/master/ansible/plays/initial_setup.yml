@@ -1,0 +1,153 @@
+---
+
+# Playbook name: initial_setup.yml 
+# Author:        Walter G. da Cruz
+# Version:       0.2
+# Date:          2019.02.04
+# Description:
+# Install  Initial configurations
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: Testing Connectivity
+    shell: "cat /etc/redhat-release"
+
+  - name: Clean etc_security_pwquality file
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: "{{ item }}"
+      # line: '{{ item }}'
+      state: absent
+    with_items:
+      - '^minlen = 8'
+      - '^minlen = 14'
+      - '^dcredit = -1'
+      - '^ucredit = -1'
+      - '^ocredit = -1'
+      - '^lcredit = -1'
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+
+  # Initially, password shows 14 characters.  I reduced to 8
+  - name: 5.3.1a Ensure password creation requirements are configured 8 characters
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: '^# minlen'
+      line: 'minlen = 8'
+      owner: root
+      group: root
+      mode: 0644
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+  
+  - name: 5.3.1b Ensure password creation requirements are configured dcredit
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: '^# dcredit'
+      line: 'dcredit = -1'
+      owner: root
+      group: root
+      mode: 0644
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+  
+  - name: 5.3.1c Ensure password creation requirements are configured ucredit
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: '^# ucredit'
+      line: 'ucredit = -1'
+      owner: root
+      group: root
+      mode: 0644
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+  
+  - name: 5.3.1d Ensure password creation requirements are configured ocredit
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: '^# ocredit'
+      line: 'ocredit = -1'
+      owner: root
+      group: root
+      mode: 0644
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+  
+  - name: 5.3.1e Ensure password creation requirements are configured lcredit
+    lineinfile:
+      path: /etc/security/pwquality.conf
+      regexp: '^# lcredit'
+      line: 'lcredit = -1'
+      owner: root
+      group: root
+      mode: 0644
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+  
+  - name: 5.4.1.1a Ensure password expiration is 365 days or less 90 days
+    lineinfile:
+      path: /etc/login.defs
+      regexp: '^PASS_MAX_DAYS'
+      line: 'PASS_MAX_DAYS    180'
+      owner: root
+      group: root
+      mode: 0444
+  
+  - name: 5.4.1.1b Ensure password expiration is 365 days or less
+    shell: "chage --maxdays 180 {{ item }}"
+    with_items:
+      - yossi
+      - walter
+      - rich
+      - sanat
+      - dhanya
+      - james
+      - zhuoming
+      - rong
+      - ameya
+      - somnath
+      - sameer
+      - saurabh
+      - prajakt
+      - puneet
+      - blade
+      - aniledig
+      - aravind
+      - manasrs1
+      - thnanda
+      - venkatam
+  
+  - name: 5.4.1.2a Ensure minimum days between password changes is 7 or more
+    lineinfile:
+      path: /etc/login.defs
+      regexp: '^PASS_MIN_DAYS'
+      line: 'PASS_MIN_DAYS   180'
+      owner: root
+      group: root
+      mode: 0444
+  
+  - name: 5.4.1.2b Ensure minimum days between password changes is 7 or more
+    shell: "chage --mindays 180 {{ item }}"
+    with_items:
+      - yossi
+      - walter
+      - rich
+      - sanat
+      - dhanya
+      - james
+      - zhuoming
+      - rong
+      - ameya
+      - somnath
+      - sameer
+      - saurabh
+      - prajakt
+      - puneet
+      - blade
+      - aniledig
+      - aravind
+      - manasrs1
+      - thnanda
+      - venkatam
+

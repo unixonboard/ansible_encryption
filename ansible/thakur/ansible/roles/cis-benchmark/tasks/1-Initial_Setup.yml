@@ -1,0 +1,195 @@
+---
+
+- name: 1.1.1.1 to 1.1.1.7 Ensure mounting of cramfs filesystems is disabled
+  file:
+    path: "/etc/modprobe.d/CIS.conf"
+    owner: root
+    group: root
+    state: touch
+
+- name: 1.1.1.1 to 1.1.1.7 Ensure mounting of cramfs filesystems is disabled
+  copy:
+    dest: "/etc/modprobe.d/CIS.conf"
+    content: |
+      install cramfs /bin/true
+      install freevxfs /bin/true
+      install jffs2 /bin/true
+      install hfs /bin/true
+      install hfsplus /bin/true
+      install squashfs /bin/true
+      install udf /bin/true
+
+- name: 1.1.1.1c Ensure mounting of cramfs filesystems is disabled
+  modprobe:
+    name: cramfs
+    state: absent
+
+- name: 1.1.1.2 Ensure mounting of freevxfs filesystems is disabled
+  modprobe:
+    name: freevxfs
+    state: absent
+
+- name: 1.1.1.3 Ensure mounting of jffs2 filesystems is disabled
+  modprobe:
+    name: jffs2
+    state: absent
+
+- name: 1.1.1.4 Ensure mounting of hfs filesystems is disabled
+  modprobe:
+    name: hfs
+    state: absent
+
+- name: 1.1.1.5 Ensure mounting of hfsplus filesystems is disabled
+  modprobe:
+    name: hfsplus
+    state: absent
+
+- name: 1.1.1.6 Ensure mounting of squashfs filesystems is disabled
+  modprobe:
+    name: squashfs
+    state: absent
+
+- name: 1.1.1.7 Ensure mounting of udf filesystems is disabled
+  modprobe:
+    name: udf
+    state: absent
+
+- name: 1.1.17 Ensure noexec option set on /dev/shm partition
+  shell: "mount -o remount,noexec /dev/shm"
+
+- name: We need to install AIDE on CentOS 5
+  command: "yum -y install aide.x86_64"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+- name: 2.2.1.0.a Install epel key for CentOS 5
+  shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-5"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+- name: 2.2.1.0.b Install epel key for CentOS 6
+  shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
+
+- name: 2.2.1.0.b Install epel key for CentOS 7
+  shell: "rpm --import https://archive.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+- name: Install EPEL repository.
+  yum:
+    name: "epel-release.noarch"
+    state: latest
+
+- name: 1.3.1a Ensure AIDE is installed
+  yum:
+    name: aide.x86_64
+    update_cache: yes
+    state: latest
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '5'"
+
+- name: 1.3.1b Ensure AIDE is installed on CentOS 5
+  command: "/usr/sbin/aide --init"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+- name: 1.3.1b Ensure AIDE is installed
+  command: "/sbin/aide --init"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+
+- name: 1.3.1c Ensure AIDE is installed
+  stat: path="/var/lib/aide/aide.db.new.gz"
+  register: aide_db_new_gz
+
+- name: 1.3.1d Ensure AIDE is installed
+  command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+  when: aide_db_new_gz.stat.exists
+
+# 0 5 * * * /usr/sbin/aide --check
+# RPM install the executable under sbin_aide, but cron run under usr_sbin_aide
+# - name: 1.3.2a Ensure filesystem integrity is regularly checked
+#   file:
+#     src: "/sbin/aide"
+#     dest: "/usr/sbin/aide"
+#     state: link
+#     owner: root
+#     group: root
+ 
+- name: 1.3.2b Ensure filesystem integrity is regularly checked
+  cron:
+    name: aide_check
+    hour: 5
+    job: "/usr/sbin/aide --check"
+
+- name: 1.4.1a Ensure permissions on bootloader config are configured user.cfg on CentOS 5
+  file:
+    path: "/boot/grub/user.cfg"
+    state: touch
+    mode: 0600
+    owner: root
+    group: root
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version < '7'"
+
+- name: 1.4.1a Ensure permissions on bootloader config are configured user.cfg for CentOS > 6
+  file:
+    path: "/boot/grub2/user.cfg"
+    state: touch
+    mode: 0600
+    owner: root
+    group: root
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+- name: 1.4.1b Ensure permissions on bootloader config are configured grub.cfg on CentOS 5
+  file:
+    path: "/boot/grub/grub.cfg"
+    state: touch
+    mode: 0600
+    owner: root
+    group: root
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version < '7'"
+
+- name: 1.4.1b Ensure permissions on bootloader config are configured grub.cfg
+  file:
+    path: "/boot/grub2/grub.cfg"
+    state: touch
+    mode: 0600
+    owner: root
+    group: root
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+- name: 1.5.1a Ensure core dumps are restricted
+  lineinfile:
+    path: "/etc/security/limits.conf"
+    line: "* hard core 0"
+    insertafter: "#@student"
+    
+- name: 1.5.1c Ensure core dumps are restricted
+  shell: "sysctl -w fs.suid_dumpable=0"
+
+- name: 1.5.3a Ensure address space layout randomization (ASLR) is enabled
+  lineinfile:
+    path: "/etc/sysctl.conf"
+    line: "kernel.randomize_va_space = 2"
+    insertafter: "# For more information,"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+- name: 1.5.3b Ensure address space layout randomization (ASLR) is enabled
+  shell: "sysctl -w kernel.randomize_va_space=2"
+
+- name: 1.5.3c Ensure address space layout randomization (ASLR) is enabled
+  shell: "/sbin/sysctl -p"
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+- name: 1.7.1.3 Ensure remote login warning banner is configured properly
+  lineinfile:
+    path: "/etc/issue.net"
+    line: "Authorized uses only. All activity may be monitored and reported"
+    insertafter: EOF
+
+- name: 1.7.1.4-5 Ensure permissions on /etc/motd and /etc/issue are configured
+  file:
+    path: "{{ item }}"
+    state: touch
+    mode: 0644
+    owner: root
+    group: root
+  with_items:
+    - "/etc/motd"
+    - "/etc/issue"
+

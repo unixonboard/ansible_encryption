@@ -1,0 +1,118 @@
+---
+
+# Playbook name: yum_security_updates.yml 
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.01.05
+# Description:
+# Install Yum security repo and other yum-related packages for maintenance
+#
+# Requirements:
+# a) CentOS 7 already comes with yum-security plugin, no need to install
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: Make _etc_resolv.conf file writable
+    shell: "chattr -i /etc/resolv.conf"
+
+  - name: Add Google DNS temporarily
+    lineinfile:
+      path: /etc/resolv.conf
+      state: present
+      insertafter: EOF
+      line: 'nameserver 8.8.8.8'
+
+  - name: Install yum repo for CentOS or RedHat version 6
+    yum:
+      name: yum-plugin-security
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
+  
+  - name: We need to install audit on CentOS 5
+    command: "yum -y install audit"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  - name: We need to install yum-cron on CentOS 5
+    command: "yum -y install yum-cron"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  - name: We need to install yum-security on CentOS 5
+    command: "yum -y install yum-security"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  # If set to yes, and state=latest then only installs updates that have been marked security related.
+  - name: Upgrade all packages marked security related
+    yum:
+      name: '*'
+      security: yes
+      state: latest
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '5'"
+
+  - name: We need to install latest kernel on CentOS 5
+    command: "yum -y install kernel-2.6.18-348.18.1.el5"
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  - name: Installing yum-cron
+    yum:
+      name: yum-cron
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '5'"
+
+  - name: Installing audit package on CentOS 6 and 7
+    yum:
+      name: audit
+      state: latest
+      update_cache: yes
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '5'"
+
+  - name: We need to install latest kernel, since the hosts has never been updated
+    yum:
+      name: kernel*
+      state: latest
+      update_cache: yes
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '5'"
+
+  - name: Run yum update for security patches
+    command: yum -y update --security
+      warn=False
+    # command_warnings=False
+  - name: Remove Google DNS
+    lineinfile:
+      path: /etc/resolv.conf
+      state: absent
+      regexp: 'nameserver 8.8.8.8'
+
+  - name: Make _etc_resolv.conf immutable
+    shell: "chattr +i /etc/resolv.conf"
+
+  ## You can also use the 'args' form to provide the options.
+  #- name: This command will change the working directory to somedir/ and will only run when /path/to/database doesn't exist.
+  #  command: /usr/bin/make_database.sh arg1 arg2
+  #  args:
+  #    chdir: somedir/
+  #    creates: /path/to/database
+  
+  # The shell line below should be under double quotes
+  # - name: restart system to reboot to newest kernel
+  #   shell: sleep 10 && reboot
+  #   async: 1
+  #   poll: 0
+  #
+  #  - name: wait for 10 seconds
+  #    pause:
+  #      seconds: 10
+  #
+  #  - name: wait for the system to reboot
+  #    wait_for_connection:
+  #      connect_timeout: 20
+  #      sleep: 5
+  #      delay: 5
+  #      timeout: 60
+  #
+  #  - name: install epel-release
+  #    yum:
+  #      name: epel-release
+  #      state: latest

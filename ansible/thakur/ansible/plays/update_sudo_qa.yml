@@ -1,0 +1,216 @@
+---
+
+# Playbook name: update_sudo_qa.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.02.07
+# Description:
+# This sudo file cleans up the original /etc/sudoers file and create entries into the
+# /etc/sudoers.d directory, making easier to maintain.
+# This playbook applies to QA Environment
+#
+# 1. You need to use your password in order to use SUDO.  There is no more sudo -i (without password)
+# 2. The exception are: install and opst system users, which have a subset of commands they can run
+# 3. You will be asked to refresh your sudo access every 30 minutes
+#
+# The Playbook should run in a small set of host, and "should be" the same for SL, RedHat,
+# or CentOS.  The same should apply for version 5.x, 6.x, or 7.x
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - file:
+      path: '/etc/sudoers.d/'
+      owner: root
+      group: root
+      mode: 0755
+      state: directory
+    become: true
+ 
+  # According to specs, we should not allow to do sudo with no password
+  # <user> ALL=(ALL)   NOPASSWD: ALL is replaced
+  - copy:
+      content: |
+               {{ item }} ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/{{ item }}'
+      owner: root
+      group: root
+      mode:  0440
+    with_items:
+      - yossi
+      - walter
+      - rich
+      - sanat
+      - dhanya
+      - james
+      - zhuoming
+      - rong
+      - ameya
+      - somnath
+      - sameer
+      - saurabh
+      - prajakt
+      - puneet
+      - blade
+      - sagarp
+      - shadab
+    become: true
+ 
+# % special case
+  - copy:
+      content: |
+              %us_admin ALL=(ALL) ALL
+      dest: '/etc/sudoers.d/us_admin'
+      owner: root
+      group: root
+      mode:  0440
+    become: true
+ 
+  - copy:
+      content: |
+              %engg_support ALL=(ALL) NOPASSWD: ALL
+      dest: '/etc/sudoers.d/engg_support'
+      owner: root
+      group: root
+      mode:  0440
+    become: true
+
+  - copy:
+      content: |
+              %eng_support ALL=(ALL) NOPASSWD: ALL
+      dest: '/etc/sudoers.d/eng_support'
+      owner: root
+      group: root
+      mode:  0440
+    become: true
+ 
+  - copy:
+      content: |
+              %qa ALL=(ALL) NOPASSWD: ALL
+      dest: '/etc/sudoers.d/qa'
+      owner: root
+      group: root
+      mode:  0440
+    become: true
+ 
+  - copy:
+      content: |
+              %qa_priv ALL=(ALL) NOPASSWD: ALL
+      dest: '/etc/sudoers.d/qa_priv'
+      owner: root
+      group: root
+      mode:  0440
+    become: true
+ 
+  # install
+  - copy:
+      content: |
+               {{ item }} ALL=NOPASSWD: /bin/rpm
+               {{ item }} ALL=NOPASSWD: /bin/chown
+               {{ item }} ALL=NOPASSWD: /bin/chmod
+               {{ item }} ALL=NOPASSWD: /etc/init.d/tomcat
+               {{ item }} ALL=NOPASSWD: /etc/init.d/pdns
+               {{ item }} ALL=NOPASSWD: /etc/init.d/solr
+               {{ item }} ALL=NOPASSWD: /etc/init.d/memcached
+               {{ item }} ALL=NOPASSWD: /etc/init.d/dataplane
+               {{ item }} ALL=NOPASSWD: /etc/init.d/jwvault
+               {{ item }} ALL=NOPASSWD: /etc/init.d/kestrel
+               {{ item }} ALL=NOPASSWD: /etc/init.d/redisdb
+               {{ item }} ALL=NOPASSWD: /usr/bin/crontab
+               {{ item }} ALL=NOPASSWD: /usr/bin/pool
+               {{ item }} ALL=NOPASSWD: /bin/date
+               {{ item }} ALL=NOPASSWD: /usr/bin/crontab -u root -l
+               {{ item }} ALL=NOPASSWD: /etc/init.d/elasticsearch
+ 
+      dest: '/etc/sudoers.d/{{ item }}'
+      owner: root
+      group: root
+      mode:  0440
+    with_items:
+      - install
+    become: true
+ 
+# opst
+  - copy:
+      content: |
+               {{ item }} ALL=NOPASSWD: /bin/chmod
+               {{ item }} ALL=NOPASSWD: /bin/chown
+               {{ item }} ALL=NOPASSWD: /bin/cp
+               {{ item }} ALL=NOPASSWD: /bin/date
+               {{ item }} ALL=NOPASSWD: /bin/rpm
+               {{ item }} ALL=NOPASSWD: /bin/systemctl
+               {{ item }} ALL=NOPASSWD: /etc/init.d/dataplane
+               {{ item }} ALL=NOPASSWD: /etc/init.d/elasticsearch
+               {{ item }} ALL=NOPASSWD: /etc/init.d/jwvault
+               {{ item }} ALL=NOPASSWD: /etc/init.d/kestrel
+               {{ item }} ALL=NOPASSWD: /etc/init.d/memcached
+               {{ item }} ALL=NOPASSWD: /etc/init.d/pdns
+               {{ item }} ALL=NOPASSWD: /etc/init.d/redisdb
+               {{ item }} ALL=NOPASSWD: /etc/init.d/solr
+               {{ item }} ALL=NOPASSWD: /etc/init.d/tomcat
+               {{ item }} ALL=NOPASSWD: /home/install/cleartomcat.sh
+               {{ item }} ALL=NOPASSWD: /sbin/chkconfig
+               {{ item }} ALL=NOPASSWD: /usr/bin/crontab
+               {{ item }} ALL=NOPASSWD: /usr/bin/docker
+               {{ item }} ALL=NOPASSWD: /usr/bin/git
+               {{ item }} ALL=NOPASSWD: /usr/bin/iostat
+               {{ item }} ALL=NOPASSWD: /usr/bin/mpstat
+               {{ item }} ALL=NOPASSWD: /usr/bin/pool
+               {{ item }} ALL=NOPASSWD: /usr/bin/sar
+               {{ item }} ALL=NOPASSWD: /usr/bin/virsh
+               {{ item }} ALL=NOPASSWD: /usr/bin/vmstat
+               {{ item }} ALL=NOPASSWD: /usr/bin/yum
+               {{ item }} ALL=NOPASSWD: /usr/sbin/lvs
+               {{ item }} ALL=NOPASSWD: /usr/sbin/pvs
+               {{ item }} ALL=NOPASSWD: /etc/init.d/winbind
+               {{ item }} ALL=NOPASSWD: /etc/bin/virt-top
+               {{ item }} ALL=NOPASSWD: /bin/touch
+               {{ item }} ALL=NOPASSWD: /usr/sbin/vgs
+               {{ item }} ALL=NOPASSWD: /sbin/vgs
+               {{ item }} ALL=NOPASSWD: /sbin/lvs
+ 
+      dest: '/etc/sudoers.d/{{ item }}'
+      owner: root
+      group: root
+      mode:  0440
+    with_items:
+      - opst
+    become: true
+ 
+  - file:
+      path: '/etc/sudoers.d/'
+      owner: root
+      group: root
+      mode: 0750
+      state: directory
+    become: true
+ 
+  # Make a backup of /etc/sudoers file, before replacing with template
+  - name: Ansible copy files remote to remote
+    copy:
+      src: /etc/sudoers
+      dest: "/etc/sudoers-{{ lookup('pipe', 'date +%Y-%m-%d_%H-%M') }}"
+      owner: root
+      group: root
+      mode: 0440
+      remote_src: yes
+ 
+  # /etc/sudoers file using template
+  - template:
+      src: ./files/sudoers
+      dest: /etc/sudoers
+      owner: root
+      group: root
+      mode: 0440
+    become: true
+ 
+  # Depend about Ansible version, check if you should use "RedHat" or "Redhat"
+  # when: ansible_os_family == "Redhat" and ansible_lsb.major_release|int = 5
+  # when: ansible_os_family == "RedHat" and ansible_lsb.major_release|int >= 5
+  # when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'

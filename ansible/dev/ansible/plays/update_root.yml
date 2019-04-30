@@ -1,0 +1,112 @@
+---
+
+# Playbook name: update_root.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.03.02
+# Description:
+# Update root password
+# Since we are using Password expiration for all Local Users, if all user's password expire
+# we need to make sure we have the root password updated with no expiration, so we can use it
+# to unlock a particular user and reset his or her password
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  vars:
+    region: "{{ location }}"
+  # remote_user: walter
+
+  tasks:
+  # - name: Allow access to etc-security_access file
+  #   shell: "chattr -i /etc/security/access.conf"
+
+  # - name: Create root group
+  #   group:
+  #     name: root
+  #     gid: 0
+  #     system: no
+  #     state: present
+
+  - name: Update root password
+    user:
+      name: root
+      password: "$1$3wnFmJJD$yYMZsLnm3btL5d/7upY.t."
+      system: no
+    when: region == "usa"
+
+  - name: Update root password
+    user:
+      name: root
+      password: ""
+      system: no
+    when: region == "eur"
+
+  - name: Update root password
+    user:
+      name: root
+      password: "$6$ntNX/RIP$f4yHKZO0H6APMuLRZ5AUgqBlQxJlO88lLhLAv5hGeF9U2/4aMGxlT0OfSRbIzaqRUtP6XuMl3ObzByT5VmdKu1"
+      system: no
+    when: region == "uae"
+
+  - name: Update root password
+    user:
+      name: root
+      password: ""
+      system: no
+    when: region == "chn"
+
+  - name: Update root password
+    user:
+      name: root
+      password: "$6$eg4jLk5F$9T/hUwzhPurIo4yctYywge1ozuLH.N3RLP.7LtwCt13EKkn/s5zWEc9wS6cAXHB0pRRpN4.BtAEWNnDpGoKtB/"
+      system: no
+    when: region == "ind"
+
+  # - name: root SSH Authorized Key
+  #   authorized_key:
+  #     user: aniledig
+  #     state: present
+  #     key: "{{ lookup('file', '~/ansible/plays/files/public_keys/aniledig') }}"
+
+  # - name: Modify root Security Access 
+  #   lineinfile:
+  #     path: /etc/security/access.conf
+  #     insertbefore: '- : ALL'
+  #     line: '+ : aniledig : ALL'
+  #     owner: root
+  #     group: root
+  #     mode: 0644
+
+  # - name: Add root to sudo list
+  # - copy:
+  #     content: |
+  #              root ALL=(ALL) ALL
+  #     dest: '/etc/sudoers.d/root'
+  #     owner: root
+  #     group: root
+  #     mode:  0440
+
+  # fatal Access denied for user by PAM account configuration
+  # - name: Fix Access blocked by pam.d
+  #   lineinfile:
+  #     path: /etc/pam.d/sshd
+  #     insertbefore: '^account    required'
+  #     line: 'account    sufficient   pam_localuser.so'
+  #     owner: root
+  #     group: root
+  #     mode: 0644
+
+  # Need to restart sshd service
+  # - name: restart sshd daemon after modifying pam.d access for init systems
+  #   shell: "/sbin/service sshd restart"
+  #   when: "ansible_service_mgr != 'systemd'"
+
+  # Need to restart sshd service 
+  # - name: restart sshd daemon after modifying pam.d access for systemd systems
+  #   shell: "/bin/systemctl restart sshd"
+  #   when: "ansible_service_mgr == 'systemd'"
+

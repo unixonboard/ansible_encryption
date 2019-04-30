@@ -1,0 +1,193 @@
+---
+
+# Script name: ./tasks/main.yml
+# Author:      Walter G. da Cruz
+# Version:     0.1
+# Date:        2019.01.23
+# Description:
+# Shell script execute firewall ansible playbook.  The script Reconfigure iptables according to the type of Application
+#
+# Requirements:
+##############################################################################################
+
+- debug: msg="Application Type is {{ hosttype }}"
+
+- name: Ensure iptables is present.
+  command: "yum -y install iptables"
+
+- name: Update Samba package
+  yum:
+    name: samba-common
+    state: latest
+
+# Disable collectd on SystemV systems
+# - name: Disable CollectD on SystemV systems
+#   service:
+#     name: collectd
+#     state: stopped
+#     enabled: no
+#   when: "ansible_service_mgr != 'systemd'"
+
+# Disable collectd on SystemD systems
+# - name: Disable CollectD on SystemD systems
+#   systemd:
+#     name: collectd
+#     enabled: no
+#     state: stopped
+#   when: "ansible_service_mgr == 'systemd'"
+
+- name: Flush iptables the first time playbook runs.
+  command: >
+    iptables -F
+    creates=/etc/firewall.bash
+  # command: /sbin/iptables -F
+
+- name: Copy firewall script for aaa hosts into place.
+  template:
+    src: firewall.aaa.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "aaa")
+
+- name: Copy firewall script for cgw hosts into place.
+  template:
+    src: firewall.cgw.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "cgw")
+
+- name: Copy firewall script for kestrel hosts into place.
+  template:
+    src: firewall.kestrel.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "kestrel")
+
+- name: Copy firewall script for mail hosts into place.
+  template:
+    src: firewall.mail.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "mail")
+
+- name: Copy firewall script for rediscluster hosts into place.
+  template:
+    src: firewall.rediscluster.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "rediscluster")
+
+- name: Copy firewall script for sftp hosts into place.
+  template:
+    src: firewall.sftp.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "sftp")
+
+- name: Copy firewall script for splunk hosts into place.
+  template:
+    src: firewall.splunk.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "splunk")
+
+- name: Copy firewall script for yum hosts into place.
+  template:
+    src: firewall.yum.bash.j2
+    dest: /etc/firewall.bash
+    owner: root
+    group: root
+    mode: 0744
+    force: yes
+  # notify: restart firewall
+  when:  (hosttype == "yum")
+
+- name: Copy firewall init script into place.
+  template:
+    src: firewall.init.j2
+    dest: /etc/init.d/firewall
+    owner: root
+    group: root
+    mode: 0755
+  when: "ansible_service_mgr != 'systemd'"
+
+- name: Copy firewall systemd unit file into place (for systemd systems).
+  template:
+    src: firewall.unit.j2
+    dest: /etc/systemd/system/firewall.service
+    owner: root
+    group: root
+    mode: 0644
+  when: "ansible_service_mgr == 'systemd'"
+
+# - name: Stop IPTables on SystemV systems
+#   shell: "/sbin/service iptables stop"
+#   when: "ansible_service_mgr != 'systemd'"
+
+# - name: Restart firewall with init
+#   shell: "/sbin/service firewall restart"
+#   when: "ansible_service_mgr != 'systemd'"
+
+# - name: Restart firewall with systemd
+#   shell: "/bin/systemctl restart firewall"
+#   when: "ansible_service_mgr == 'systemd'"
+
+- name: Configure the firewall service for init systems.
+  shell: "chkconfig firewall on"
+  when: "ansible_service_mgr != 'systemd'"
+
+- name: Configure the firewall service for systemd systems.
+  shell: "/bin/systemctl enable firewall"
+  when: "ansible_service_mgr == 'systemd'"
+
+# - name: Configure the firewall service.
+#   service:
+#     name: firewall
+#     state: "{{ firewall_state }}"
+#     enabled: "{{ firewall_enabled_at_boot }}"
+
+- import_tasks: disable-other-firewalls.yml
+  when: firewall_disable_firewalld or firewall_disable_ufw
+
+- name: Restart firewall on SystemV systems
+  shell: >
+    sleep 5s && /sbin/service firewall restart
+  async: 10
+  poll: 0
+  when: "ansible_service_mgr != 'systemd'"
+
+- name: Restart firewall on SystemD systems
+  shell: >
+    sleep 5s && /bin/systemctl restart firewall
+  async: 10
+  poll: 0
+  when: "ansible_service_mgr == 'systemd'"
+

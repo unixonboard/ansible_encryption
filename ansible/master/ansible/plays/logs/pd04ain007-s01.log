@@ -1,0 +1,128 @@
+Version -> 7
+pd04ain007-s01 is a Centos 7
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [all] ************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ************************************************************************************************************************************************************************
+ok: [pd04ain007-s01]
+
+TASK [Testing Connectivity] *******************************************************************************************************************************************************************
+changed: [pd04ain007-s01] => {"changed": true, "cmd": "cat /etc/redhat-release", "delta": "0:00:00.042127", "end": "2019-02-12 16:37:37.268107", "rc": 0, "start": "2019-02-12 16:37:37.225980", "stderr": "", "stderr_lines": [], "stdout": "CentOS Linux release 7.2.1511 (Core) ", "stdout_lines": ["CentOS Linux release 7.2.1511 (Core) "]}
+
+TASK [5.3.1a Ensure password creation requirements are configured] ****************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line added"}
+
+TASK [5.3.1b Ensure password creation requirements are configured] ****************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line added"}
+
+TASK [5.3.1c Ensure password creation requirements are configured] ****************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line added"}
+
+TASK [5.3.1d Ensure password creation requirements are configured] ****************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line added"}
+
+TASK [5.3.1e Ensure password creation requirements are configured] ****************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line added"}
+
+TASK [5.4.1.1a Ensure password expiration is 365 days or less] ********************************************************************************************************************************
+changed: [pd04ain007-s01] => {"backup": "", "changed": true, "msg": "line replaced"}
+
+TASK [5.4.1.1b Ensure password expiration is 365 days or less] ********************************************************************************************************************************
+changed: [pd04ain007-s01] => (item=yossi) => {"changed": true, "cmd": "chage --maxdays 90 yossi", "delta": "0:00:00.055447", "end": "2019-02-12 16:38:22.233002", "item": "yossi", "rc": 0, "start": "2019-02-12 16:38:22.177555", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=walter) => {"changed": true, "cmd": "chage --maxdays 90 walter", "delta": "0:00:00.054019", "end": "2019-02-12 16:38:28.598913", "item": "walter", "rc": 0, "start": "2019-02-12 16:38:28.544894", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=rich) => {"changed": true, "cmd": "chage --maxdays 90 rich", "delta": "0:00:00.055293", "end": "2019-02-12 16:38:34.947272", "item": "rich", "rc": 0, "start": "2019-02-12 16:38:34.891979", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=sanat) => {"changed": true, "cmd": "chage --maxdays 90 sanat", "delta": "0:00:00.053640", "end": "2019-02-12 16:38:41.358502", "item": "sanat", "rc": 0, "start": "2019-02-12 16:38:41.304862", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=dhanya) => {"changed": true, "cmd": "chage --maxdays 90 dhanya", "delta": "0:00:00.053947", "end": "2019-02-12 16:38:47.701624", "item": "dhanya", "rc": 0, "start": "2019-02-12 16:38:47.647677", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=james) => {"changed": true, "cmd": "chage --maxdays 90 james", "delta": "0:00:00.037191", "end": "2019-02-12 16:38:54.037360", "item": "james", "rc": 0, "start": "2019-02-12 16:38:54.000169", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=zhuoming) => {"changed": true, "cmd": "chage --maxdays 90 zhuoming", "delta": "0:00:00.051043", "end": "2019-02-12 16:39:00.384885", "item": "zhuoming", "rc": 0, "start": "2019-02-12 16:39:00.333842", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=rong) => {"changed": true, "cmd": "chage --maxdays 90 rong", "delta": "0:00:00.055605", "end": "2019-02-12 16:39:06.780113", "item": "rong", "rc": 0, "start": "2019-02-12 16:39:06.724508", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=ameya) => {"changed": true, "cmd": "chage --maxdays 90 ameya", "delta": "0:00:00.055043", "end": "2019-02-12 16:39:13.134699", "item": "ameya", "rc": 0, "start": "2019-02-12 16:39:13.079656", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=somnath) => {"changed": true, "cmd": "chage --maxdays 90 somnath", "delta": "0:00:00.040883", "end": "2019-02-12 16:39:19.491951", "item": "somnath", "rc": 0, "start": "2019-02-12 16:39:19.451068", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=sameer) => {"changed": true, "cmd": "chage --maxdays 90 sameer", "delta": "0:00:00.036634", "end": "2019-02-12 16:39:25.852299", "item": "sameer", "rc": 0, "start": "2019-02-12 16:39:25.815665", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=saurabh) => {"changed": true, "cmd": "chage --maxdays 90 saurabh", "delta": "0:00:00.051581", "end": "2019-02-12 16:39:32.213438", "item": "saurabh", "rc": 0, "start": "2019-02-12 16:39:32.161857", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=prajakt) => {"changed": true, "cmd": "chage --maxdays 90 prajakt", "delta": "0:00:00.038414", "end": "2019-02-12 16:39:38.540619", "item": "prajakt", "rc": 0, "start": "2019-02-12 16:39:38.502205", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=arvind) => {"changed": true, "cmd": "chage --maxdays 90 arvind", "delta": "0:00:00.053543", "end": "2019-02-12 16:39:44.894899", "item": "arvind", "rc": 0, "start": "2019-02-12 16:39:44.841356", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=puneet) => {"changed": true, "cmd": "chage --maxdays 90 puneet", "delta": "0:00:00.060218", "end": "2019-02-12 16:39:51.272038", "item": "puneet", "rc": 0, "start": "2019-02-12 16:39:51.211820", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=blade) => {"changed": true, "cmd": "chage --maxdays 90 blade", "delta": "0:00:00.054484", "end": "2019-02-12 16:39:57.609552", "item": "blade", "rc": 0, "start": "2019-02-12 16:39:57.555068", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+changed: [pd04ain007-s01] => (item=sagarp) => {"changed": true, "cmd": "chage --maxdays 90 sagarp", "delta": "0:00:00.053504", "end": "2019-02-12 16:40:03.938076", "item": "sagarp", "rc": 0, "start": "2019-02-12 16:40:03.884572", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+failed: [pd04ain007-s01] (item=shadab) => {"changed": true, "cmd": "chage --maxdays 90 shadab", "delta": "0:00:00.045057", "end": "2019-02-12 16:40:10.250467", "item": "shadab", "msg": "non-zero return code", "rc": 1, "start": "2019-02-12 16:40:10.205410", "stderr": "chage: user 'shadab' does not exist in /etc/passwd", "stderr_lines": ["chage: user 'shadab' does not exist in /etc/passwd"], "stdout": "", "stdout_lines": []}
+	to retry, use: --limit @/home/walter/scripts/ansible/plays/initial_setup.retry
+
+PLAY RECAP ************************************************************************************************************************************************************************************
+pd04ain007-s01             : ok=8    changed=7    unreachable=0    failed=1   
+
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [all] ************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ************************************************************************************************************************************************************************
+ok: [pd04ain007-s01]
+
+TASK [iptables : Ensure iptables is present.] *************************************************************************************************************************************************
+changed: [pd04ain007-s01] => {"changed": true, "cmd": ["yum", "-y", "install", "iptables"], "delta": "0:00:03.449494", "end": "2019-02-12 16:42:34.829252", "rc": 0, "start": "2019-02-12 16:42:31.379758", "stderr": "", "stderr_lines": [], "stdout": "Loaded plugins: fastestmirror\nLoading mirror speeds from cached hostfile\n * base: centos.kw.zain.com\n * extras: centos.kw.zain.com\n * updates: centos.kw.zain.com\nPackage iptables-1.4.21-28.el7.x86_64 already installed and latest version\nNothing to do", "stdout_lines": ["Loaded plugins: fastestmirror", "Loading mirror speeds from cached hostfile", " * base: centos.kw.zain.com", " * extras: centos.kw.zain.com", " * updates: centos.kw.zain.com", "Package iptables-1.4.21-28.el7.x86_64 already installed and latest version", "Nothing to do"]}
+
+TASK [iptables : Flush iptables the first time playbook runs.] ********************************************************************************************************************************
+ok: [pd04ain007-s01] => {"changed": false, "cmd": ["iptables", "-F"], "rc": 0, "stdout": "skipped, since /etc/firewall.bash exists", "stdout_lines": ["skipped, since /etc/firewall.bash exists"]}
+
+TASK [iptables : Copy firewall script for aaa hosts into place.] ******************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Copy firewall script for kestrel hosts into place.] **************************************************************************************************************************
+changed: [pd04ain007-s01] => {"changed": true, "checksum": "00125d3c483e39fb43c1fc99d30e42aaa09fbce8", "dest": "/etc/firewall.bash", "gid": 0, "group": "root", "md5sum": "01e56a18b4b04078102a9bb57a44b745", "mode": "0744", "owner": "root", "size": 5462, "src": "/home/walter/.ansible/tmp/ansible-tmp-1550018562.44-177841310074685/source", "state": "file", "uid": 0}
+
+TASK [iptables : Copy firewall script for rediscluster hosts into place.] *********************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Copy firewall script for yum hosts into place.] ******************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Copy firewall init script into place.] ***************************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Copy firewall systemd unit file into place (for systemd systems).] ***********************************************************************************************************
+ok: [pd04ain007-s01] => {"changed": false, "checksum": "54f8633a306461b70da0edfa1fe4c40fd0ba86cd", "dest": "/etc/systemd/system/firewall.service", "gid": 0, "group": "root", "mode": "0644", "owner": "root", "path": "/etc/systemd/system/firewall.service", "size": 201, "state": "file", "uid": 0}
+
+TASK [iptables : Configure the firewall service.] *********************************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Configure the firewall service.] *********************************************************************************************************************************************
+changed: [pd04ain007-s01] => {"changed": true, "cmd": "/bin/systemctl enable firewall", "delta": "0:00:00.107695", "end": "2019-02-12 16:43:13.973512", "rc": 0, "start": "2019-02-12 16:43:13.865817", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+TASK [iptables : Check if firewalld package is installed (on RHEL).] **************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Disable the firewalld service (on RHEL, if configured).] *********************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Check if ufw package is installed (on Ubuntu).] ******************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Disable the ufw firewall (on Ubuntu, if configured).] ************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Check if ufw package is installed (on Archlinux).] ***************************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+TASK [iptables : Disable the ufw firewall (on Archlinux, if configured).] *********************************************************************************************************************
+skipping: [pd04ain007-s01] => {"changed": false, "skip_reason": "Conditional result was False"}
+
+PLAY RECAP ************************************************************************************************************************************************************************************
+pd04ain007-s01             : ok=6    changed=3    unreachable=0    failed=0   
+
+Using /etc/ansible/ansible.cfg as config file
+
+PLAY [all] ************************************************************************************************************************************************************************************
+
+TASK [Gathering Facts] ************************************************************************************************************************************************************************
+ok: [pd04ain007-s01]
+
+TASK [restart system to reboot to newest kernel] **********************************************************************************************************************************************
+changed: [pd04ain007-s01] => {"ansible_job_id": "677002485585.13103", "changed": true, "finished": 0, "results_file": "/root/.ansible_async/677002485585.13103", "started": 1}
+
+PLAY RECAP ************************************************************************************************************************************************************************************
+pd04ain007-s01             : ok=2    changed=1    unreachable=0    failed=0   
+
+[sudo] password for walter: 
+PolicyKit daemon disconnected from the bus.
+We are no longer a registered authentication agent.

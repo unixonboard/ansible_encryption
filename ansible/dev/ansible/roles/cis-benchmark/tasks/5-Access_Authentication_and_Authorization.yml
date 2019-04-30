@@ -1,0 +1,186 @@
+---
+
+- name: 5.1.2-6 Ensure permissions on /etc/crontab,cron.hourly,cron.daily,cron.weekly,cron.monthly are configured
+  file:
+    path: "{{ item }}"
+    state: touch
+    force: yes
+    mode: 0700
+    owner: root
+    group: root
+  with_items:
+    - /etc/crontab
+    - /etc/cron.hourly
+    - /etc/cron.daily
+    - /etc/cron.weekly
+    - /etc/cron.monthly
+
+- name: 5.1.7 Ensure permissions on /etc/cron.d are configured
+  file:
+    path: "/etc/cron.d"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
+- name: 5.1.8 Ensure at/cron is restricted to authorized users
+  file:
+    path: "{{ item }}"
+    state: touch
+    force: yes
+    mode: 0700
+    owner: root
+    group: root
+  with_items:
+    - /etc/cron.allow
+    - /etc/at.allow
+
+- name: 5.2.1 Ensure permissions on /etc/ssh/sshd_config are configured
+  file:
+    path: "/etc/ssh/sshd_config"
+    state: touch
+    force: yes
+    mode: 0600
+    owner: root
+    group: root
+
+- name: 5.2.3 Ensure SSH LogLevel is set to INFO
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^LogLevel'
+    line: 'LogLevel INFO'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.4 Ensure SSH X11 forwarding is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^X11Forwarding'
+    line: 'X11Forwarding no'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.5 Ensure SSH X11 forwarding is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^MaxAuthTries'
+    line: 'MaxAuthTries 4'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.6 Ensure SSH IgnoreRhosts is enabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^IgnoreRhosts'
+    line: 'IgnoreRhosts yes'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.7 Ensure SSH HostbasedAuthentication is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^HostbasedAuthentication'
+    line: 'HostbasedAuthentication no'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.8 Ensure SSH root login is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.9 Ensure SSH PermitEmptyPasswords is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitEmptyPasswords'
+    line: 'PermitEmptyPasswords no'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.10 Ensure SSH PermitUserEnvironment is disabled
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitUserEnvironment'
+    line: 'PermitUserEnvironment no'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.11 Ensure only approved MAC algorithms are used
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+    line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+    owner: root
+    group: root
+    mode: 0444
+  when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version > '6'"
+
+- name: 5.2.12a Ensure SSH Idle Timeout Interval is configured
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ClientAliveInterval'
+    line: 'ClientAliveInterval 300'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.12b Ensure SSH Idle Timeout Interval is configured
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^ClientAliveCountMax'
+    line: 'ClientAliveCountMax 0'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.2.13 Ensure SSH LoginGraceTime is set to one minute or less
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^LoginGraceTime'
+    line: 'LoginGraceTime 60'
+    owner: root
+    group: root
+    mode: 0444
+
+- name: 5.4.4a Ensure default user umask is 027 or more restrictive
+  replace:
+    path: /etc/bashrc
+    regexp: '^       umask 002'
+    replace: '       umask 027'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: 5.4.4b Ensure default user umask is 027 or more restrictive
+  replace:
+    path: /etc/profile
+    regexp: '^    umask 002'
+    replace: '    umask 027'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Restart sshd Daemon on SystemV systems
+  service:
+    name: sshd
+    state: restarted
+  when: "ansible_service_mgr != 'systemd'"
+
+- name: Restart sshd Daemon on SystemD systems
+  systemd:
+    name: sshd
+    state: restarted
+    daemon_reload: yes
+  when: "ansible_service_mgr == 'systemd'"
+

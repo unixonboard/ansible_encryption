@@ -1,0 +1,25 @@
+pipeline {
+  agent { label 'dc13-psyumr-01' }
+  parameters {
+    string(name: 'VERSION',
+      defaultValue: '0.0.1',
+      description: 'Version Number')
+  }
+  stages {
+    stage("checkout") {
+      steps {
+        git credentialsId: 'walter', url: 'git@dc01-psyumr-01.i.jaspersystems.com:/var/lib/git/ansible.git'
+      }
+    }
+    stage("Location") {
+      steps {
+        sh "pwd"
+      }
+    }
+  }
+  post {
+    always {
+      echo "Pipeline executed"
+    }
+  }
+} 

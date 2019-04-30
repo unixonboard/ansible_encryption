@@ -1,0 +1,147 @@
+---
+firewall_state: started
+firewall_enabled_at_boot: true
+
+# sunrpc = 111
+# smux = 199
+# nrpe = 5666
+
+aaa_firewall_allowed_tcp_ports:
+  - "22"
+  - "111"
+  - "812"
+  - "5666"
+  - "6556"
+  - "8009"
+  - "8080"
+  - "8999"
+  - "35680"
+  - "59181"
+
+# bctp      8999/tcp            # Brodos Crypto Trade Protocol
+# gprs-data 3386/tcp            # GPRS Data
+# CGW runs on port 8080
+cgw_firewall_allowed_tcp_ports:
+  - "22"
+  - "111"
+  - "161"
+  - "924"
+  - "3386"
+  - "5666"
+  - "6556"
+  - "8009"
+  - "8080"
+  - "8999"
+  - "50275"
+  - "54922"
+
+# kestrel runs on port 22133
+#  don't know - 59184, 43022
+# sunrpc = 111
+# snmp            161/tcp                         # Simple Net Mgmt Proto
+kestrel_firewall_allowed_tcp_ports:
+  - "22"
+  - "111"
+  - "161"
+  - "5666"
+  - "22133"
+  - "22134"
+  - "37581"
+  - "47078"
+
+mail_firewall_allowed_tcp_ports:
+  - "22"
+  - "25"
+  - "111"
+  - "5666"
+
+# redis runs on port 6379
+redis_firewall_allowed_tcp_ports:
+  - "22"
+  - "5666"
+  - "6379"
+  - "16379"
+
+# 618 = dei-icda
+# 82 = xfer
+# ftp runs on port 21
+sftp_firewall_allowed_tcp_ports:
+  - "22"
+  - "5666"
+
+# irdmi     8000/tcp            # iRDMI
+# palace-6  9997/tcp            # Palace-6
+# bctp      8999/tcp            # Brodos Crypto Trade Protocol
+# etlservicemgr 9001/tcp            # ETL Service Manager
+# dynamid       9002/tcp            # DynamID authentication
+splunk_firewall_allowed_tcp_ports:
+  - "22"
+  - "25"
+  - "111"
+  - "161"
+  - "875"
+  - "5666"
+  - "6556"
+  - "8000"
+  - "8009"
+  - "8080"
+  - "8089"
+  - "8191"
+  - "8999"
+  - "9001"
+  - "9002"
+  - "9997"
+  - "37531"
+
+# Jenkins for the DC runs on Port 8080
+yum_firewall_allowed_tcp_ports:
+  - "22"
+  - "80"
+  - "443"
+  - "8080"
+
+aaa_firewall_source_network_tcp_ports: 
+  - { src: "127.0.0.1", port: "8005" }
+  - { src: "127.0.0.1", port: "199" }
+  - { src: "192.168.122.1", port: "53" }
+
+cgw_firewall_source_network_tcp_ports: 
+  - { src: "192.168.122.1", port: "53" }
+  - { src: "127.0.0.1", port: "199" }
+  - { src: "127.0.0.1", port: "8005" }
+
+# smux = 199
+kestrel_firewall_source_network_tcp_ports: 
+  - { src: "127.0.0.1", port: "25" }
+  - { src: "127.0.0.1", port: "199" }
+
+mail_firewall_source_network_tcp_ports: 
+  - { src: "127.0.0.1", port: "199" }
+
+redis_firewall_source_network_tcp_ports: 
+  - { src: "127.0.0.1", port: "25" }
+  - { src: "127.0.0.1", port: "199" }
+
+sftp_firewall_source_network_tcp_ports: 
+  - { src: "192.168.122.1", port: "53" }
+  - { src: "127.0.0.1", port: "199" }
+
+splunk_firewall_source_network_tcp_ports: 
+  - { src: "127.0.0.1", port: "199" }
+  - { src: "127.0.0.1", port: "8005" }
+  - { src: "127.0.0.1", port: "8065" }
+
+yum_firewall_source_network_tcp_ports: 
+  - { src: "192.168.122.1", port: "53" }
+
+firewall_allowed_udp_ports: []
+firewall_forwarded_tcp_ports: []
+firewall_forwarded_udp_ports: []
+firewall_additional_rules: []
+firewall_ip6_additional_rules: []
+firewall_log_dropped_packets: true
+
+# Set to true to ensure other firewall management software is disabled.
+firewall_disable_firewalld: false
+firewall_disable_ufw: false
+

@@ -1,0 +1,289 @@
+---
+
+# Playbook name: fix_cis_benchmark.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.01.08
+# Description:
+# Fix vulnerabilities found by the CIS_Benchmark took
+#
+# Requirements:
+#
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: 1.4.1a Ensure permissions on bootloader config are configured user.cfg
+    file:
+      path: "/boot/grub2/user.cfg"
+      state: touch
+      mode: 0600
+      owner: root
+      group: root
+
+  - name: 1.4.1b Ensure permissions on bootloader config are configured grub.cfg
+    file:
+      path: "/boot/grub2/grub.cfg"
+      state: touch
+      mode: 0600
+      owner: root
+      group: root
+
+  - name: 1.5.3 Ensure address space layout randomization (ASLR) is enabled
+    shell: "sysctl -w kernel.randomize_va_space=2"
+
+  - name: 2.2.2 Ensure X Window System is not installed
+    yum:
+      name: xorg-x11*
+      state: absent
+
+  - name: 3.1.2a Ensure packet redirect sending is disabled
+    shell: "sysctl -w net.ipv4.conf.all.send_redirects=0"
+
+  - name: 3.1.2b Ensure packet redirect sending is disabled
+    shell: "sysctl -w net.ipv4.conf.default.send_redirects=0" 
+
+  - name: 3.1.2c Ensure packet redirect sending is disabled
+    shell: "sysctl -w net.ipv4.route.flush=1"
+
+  - name: 3.2.2a Ensure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.conf.all.accept_redirects=0"
+
+  - name: 3.2.2b Ensure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.conf.default.accept_redirects=0"
+
+  - name: 3.2.2c Ensure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.route.flush=1"
+
+  - name: 3.2.3a Ensure secure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.conf.all.secure_redirects=0"
+
+  - name: 3.2.3b Ensure secure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.conf.default.secure_redirects=0"
+
+  - name: 3.2.3c Ensure secure ICMP redirects are not accepted
+    shell: "sysctl -w net.ipv4.route.flush=1"
+
+  - name: 3.2.4a Ensure suspicious packets are logged
+    shell: "sysctl -w net.ipv4.conf.all.log_martians=1"
+
+  - name: 3.2.4b Ensure suspicious packets are logged
+    shell: "sysctl -w net.ipv4.conf.default.log_martians=1"
+
+  - name: 3.2.4c Ensure suspicious packets are logged
+    shell: "sysctl -w net.ipv4.route.flush=1"
+
+  - name: 4.2.1.3 Ensure rsyslog default file permissions configured
+    lineinfile:
+      path: /etc/rsyslog.conf
+      regexp: '^$FileCreateMode'
+      line: '$FileCreateMode 0640'
+      owner: root
+      group: root
+      mode: 0644
+
+  - name: 4.2.4 Ensure permissions on all logfiles are configured
+    shell: "find /var/log -type f -exec chmod g-wx,o-rwx {} +"
+
+  - name: 5.2.1 Ensure permissions on /etc/ssh/sshd_config are configured
+    file:
+      path: "/etc/ssh/sshd_config"
+      state: touch
+      mode: 0600
+      owner: root
+      group: root
+
+  - name: 5.2.3 Ensure SSH LogLevel is set to INFO
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^LogLevel'
+      line: 'LogLevel INFO'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.4 Ensure SSH X11 forwarding is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^X11Forwarding'
+      line: 'X11Forwarding no'
+      owner: root
+      group: root
+      mode: 0444
+ 
+  - name: 5.2.5 Ensure SSH X11 forwarding is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^MaxAuthTries'
+      line: 'MaxAuthTries 4'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.6 Ensure SSH IgnoreRhosts is enabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^IgnoreRhosts'
+      line: 'IgnoreRhosts yes'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.7 Ensure SSH HostbasedAuthentication is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^HostbasedAuthentication'
+      line: 'HostbasedAuthentication no'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.8 Ensure SSH root login is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitRootLogin'
+      line: 'PermitRootLogin no'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.9 Ensure SSH PermitEmptyPasswords is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitEmptyPasswords'
+      line: 'PermitEmptyPasswords no'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.10 Ensure SSH PermitUserEnvironment is disabled
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^PermitUserEnvironment'
+      line: 'PermitUserEnvironment no'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.11 Ensure only approved MAC algorithms are used
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+      line: 'MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.12a Ensure SSH Idle Timeout Interval is configured
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^ClientAliveInterval'
+      line: 'ClientAliveInterval 300'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.12b Ensure SSH Idle Timeout Interval is configured
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^ClientAliveCountMax'
+      line: 'ClientAliveCountMax 0'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.2.13 Ensure SSH LoginGraceTime is set to one minute or less
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: '^LoginGraceTime'
+      line: 'LoginGraceTime 60'
+      owner: root
+      group: root
+      mode: 0444
+
+  - name: 5.4.1.1 Ensure password expiration is 365 days or less
+    shell: "chage --maxdays 365 {{ item }}"
+    with_items: 
+      - yossi
+      - walter
+      - rich
+      - sanat
+      - dhanya
+      - james
+      - zhuoming
+      - rong
+      - ameya
+      - somnath
+      - sameer
+      - saurabh
+      - prajakt
+      - arvind
+      - puneet
+      - blade
+      - sagarp
+      - shadab
+
+  - name: 5.4.1.2 Ensure minimum days between password changes is 7 or more
+    shell: "chage --mindays 365 {{ item }}"
+    with_items: 
+      - yossi
+      - walter
+      - rich
+      - sanat
+      - dhanya
+      - james
+      - zhuoming
+      - rong
+      - ameya
+      - somnath
+      - sameer
+      - saurabh
+      - prajakt
+      - arvind
+      - puneet
+      - blade
+      - sagarp
+      - shadab
+
+  - name: Restart sshd Daemon
+    systemd:
+      name: sshd
+      state: restarted
+      daemon_reload: yes
+
+  - name: 6.1.3 Ensure permissions on /etc/shadow are configured
+    file:
+      path: "/etc/shadow"
+      state: touch
+      mode: 0000
+      owner: root
+      group: root
+
+  - name: 6.1.5 Ensure permissions on /etc/gshadow are configured
+    file:
+      path: "/etc/gshadow"
+      state: touch
+      mode: 0000
+      owner: root
+      group: root
+
+  - name: 6.1.7 Ensure permissions on /etc/shadow- are configured
+    file:
+      path: "/etc/shadow-"
+      state: touch
+      mode: 0000
+      owner: root
+      group: root
+
+  - name: 6.1.9 Ensure permissions on /etc/gshadow- are configured
+    file:
+      path: "/etc/gshadow-"
+      state: touch
+      mode: 0000
+      owner: root
+      group: root
+

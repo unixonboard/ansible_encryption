@@ -1,0 +1,138 @@
+---
+
+# Playbook name: iptables_yum.yml 
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.01.07
+# Description:
+# Install iptables rules on Yum repos
+#
+# Requirements:
+# a) CentOS 7 already comes with yum-security plugin, no need to install
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  - name: We need to install latest iptables package
+    yum:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    with_items:
+      - iptables-services
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version < '7'"
+
+  - name: We need to install latest iptables package
+    yum:
+      name: "{{ item }}"
+      state: latest
+      update_cache: yes
+    with_items:
+      - python-firewall.noarch
+      - firewalld.noarch
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+  - name: Enable iptables for CentOS or RedHat version 7
+    systemd:
+      name: firewalld
+      enabled: yes
+      daemon_reload: yes
+      state: restarted
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+  - name: Set public as default policy
+    shell: firewall-cmd --set-default-zone=public
+
+  - name: Link eth0 to public default zone
+    shell: firewall-cmd --zone=public --add-interface=eth0
+
+  - name: Bind network interface to the public zone
+    shell: firewall-cmd --permanent --zone=public --change-interface=eth0
+
+  - name: Firewalld Rules - ssh
+    firewalld:
+      zone: public
+      service: ssh
+      permanent: yes
+      state: enabled
+      immediate: yes
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+
+  - name: Firewalld Rules - http
+    firewalld:
+      zone: public
+      service: http
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Firewalld Rules - https
+    firewalld:
+      zone: public
+      service: https
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Firewalld Rules - smtp
+    firewalld:
+      zone: public
+      service: smtp
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Firewalld Rules - nrpe
+    firewalld:
+      zone: public
+      service: nrpe
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Firewalld Rules - rsync
+    firewalld:
+      zone: public
+      service: rsyncd
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Firewalld Rules - sunrpc
+    firewalld:
+      zone: public
+      service: rpc-bind
+      permanent: yes
+      state: enabled
+      immediate: yes
+
+  - name: Install yum repo for CentOS or RedHat version 5
+    yum:
+      name: yum-security
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '5'"
+
+  - name: Install yum repo for CentOS or RedHat version 6
+    yum:
+      name: yum-plugin-security
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '6'"
+  
+  # Configuration rules for ipv4 are done, save them
+  - name: Save iptables rules on CentOS or RedHat
+    shell: "/sbin/iptables-save > /etc/sysconfig/iptables"
+
+  # Configuration rules for ipv6 are done, save them
+  - name: Save iptables for IPv6  rules on CentOS or RedHat
+    shell: "/sbin/ip6tables-save > /etc/sysconfig/ip6tables"
+
+  - name: Enable iptables for CentOS or RedHat version 7
+    systemd:
+      name: firewalld
+      enabled: yes
+      daemon_reload: yes
+      state: restarted
+    when: "ansible_os_family == 'RedHat' and ansible_distribution_major_version == '7'"
+

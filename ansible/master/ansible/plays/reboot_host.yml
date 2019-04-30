@@ -1,0 +1,40 @@
+---
+
+# Playbook name: reboot_host.yml
+# Author:        Walter G. da Cruz
+# Version:       0.1
+# Date:          2019.01.17
+# Description:
+# Reboot host(s)
+#
+# The Playbook should run in a small set of host, and "should be" the same for SL, RedHat,
+# or CentOS.  The same should apply for version 5.x, 6.x, or 7.x
+#
+# Requirements:
+##############################################################################################
+
+- hosts: all
+  become: yes
+  become_method: sudo
+  # remote_user: walter
+
+  tasks:
+  # The shell line below should be under double quotes
+  - name: restart system to reboot to newest kernel
+    reboot:
+    # msg
+    # shell: "sleep 10 && reboot"
+    # async: 1
+    # poll: 0
+
+  #
+  #  - name: wait for 10 seconds
+  #    pause:
+  #      seconds: 10
+  #
+  #  - name: wait for the system to reboot
+  #    wait_for_connection:
+  #      connect_timeout: 20
+  #      sleep: 5
+  #      delay: 5
+  #      timeout: 60

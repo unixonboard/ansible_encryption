@@ -1,0 +1,9 @@
+---
+# tasks file for cis-benchmark
+
+  - import_tasks: 1-Initial_Setup.yml
+  - import_tasks: 2-Services.yml
+  - import_tasks: 3-Network_Configuration.yml
+  - import_tasks: 4-Logging_and_Auditing.yml
+  - import_tasks: 5-Access_Authentication_and_Authorization.yml
+  - import_tasks: 6-System_Maintenance.yml
